@@ -28,19 +28,20 @@ const userSchema = new mongoose.Schema({
     } , 
     watchHistory :  {
         type : mongoose.Schema.Types.ObjectId , 
-        ref : Video 
+        ref : "Video"
     }, 
     avatar : {
         type : String , 
         required : true 
+       
     }, 
     coverImage : {
         type : String , 
-        required : true 
+     
     }, 
     refreshToken : {
         type : String , 
-        required : true 
+        
     }
 
     
