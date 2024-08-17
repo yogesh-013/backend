@@ -14,11 +14,13 @@ const  uploadInCloudinary = async (localfilePath)=>{
       const response = await cloudinary.uploader.upload(localfilePath , {
         resource_type : "auto"
       })
-      // fs.unlinkSync(localfilePath)
+      fs.unlinkSync(localfilePath)
       return response ; 
    }catch(error){
   /*   fs.unlinkSync(localfilePath) */
+  fs.unlinkSync(localfilePath)
     console.log("fucking error " , error)
+
     return null ; 
    }
 }

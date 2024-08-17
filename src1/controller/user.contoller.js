@@ -1,5 +1,5 @@
 import asyncHandler from "../utils/asyncHandler.js";
-import ApiError from "../utils/ApiHandler.js";
+import {ApiError } from "../utils/ApiHandler.js";
 import { User } from "../models/usermodel.js";
 import uploadInCloudinary from "../utils/cloudinary.js";
 import ApiResponse from "../utils/ApiResponse.js";
@@ -20,7 +20,11 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   const avatarLocalPath = req.files?.avatar?.[0]?.path;
-  const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
+  let coverImageLocalPath ; req.files?.coverImage?.[0]?.path;
+  if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0 ){
+coverImageLocalPath = req.files.coverImage[0].path 
+  }
+  console.log("Req Files : ",  req.files)
   if(!avatarLocalPath){
     throw new ApiError(401 , "Something is wrong with avatar")
   }
@@ -32,7 +36,8 @@ const registerUser = asyncHandler(async (req, res) => {
     console.log('Avatar uploaded:', avatar);
   }
   if(!avatar){
-    throw new ApiError(401 , "Something is wrong with avatar")
+    res.status(400).json(new  ApiError(401 , "Something is wrong with avatar"))
+    
   }
 
   if (coverImageLocalPath) {
