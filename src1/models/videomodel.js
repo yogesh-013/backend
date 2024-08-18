@@ -1,7 +1,7 @@
 import mongoose from "mongoose"
 const videoSchema = mongoose.Schema({
     videoFile : {
-        type : String ,// cloudnary
+        type : String ,// cloudinary url
          required : true 
     },
     thumbnail : {
