@@ -381,6 +381,65 @@ const getUserChannnelProfile = asyncHandler(async (req , res)=>{
     .json(new ApiResponse(200 , channel[0] , "User Details Fetched Successfully"))
 })
 
+////////////////////////////////////////
+
+const getWatchHistory = asyncHandler(async (req, res)=>{
+  // req.user._id   this will give string not mongodb id this is is converted by mongoose internally into mongodb id as objectId("")
+   
+  const user = await User.aggregate([
+    {
+      $match:{
+        _id:new mongoose.Types.ObjectId(req.user._id),// bcz mongooose will not converted this into id
+      }
+    },
+    {
+      $lookup:{
+        from:"videos", //our Video model will be saved as videos on mogodb
+        localField:"watchHistory",
+        foreignField:"_id",
+        as:"watchHistory",
+        pipeline:[
+          {
+            $lookup:{
+              from:"users",
+              localField:"owner",
+              foreignField:"_id",
+              as:"owner",
+              pipeline:[ // everthing will be added to owner filed only
+                {
+                  $project:{
+                      username:1,
+                      fullName:1,
+                      avatar:1
+                  }
+                }
+              ]
+            }
+          },
+          {
+            $addFields:{
+              owner:{
+                $first:"$owner"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ])
+  
+  return res
+     .status(200)
+     .json(
+      new ApiResponse(
+        200,
+        user[0].watchHistory,
+        "Watch History fetched"
+        )
+     )
+  })
+
+
 export {registerUser ,
   loginUser , 
   logoutUser ,
@@ -389,6 +448,8 @@ changeCurrentPassword ,
 getCurrentUser , 
 updateUserAvatar , 
 updateUserCoverImage , 
-getUserChannnelProfile
+getUserChannnelProfile , 
+updateAccountDetails , 
+getWatchHistory
 
 };
